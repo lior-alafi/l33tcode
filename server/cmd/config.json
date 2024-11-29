@@ -1,0 +1,13 @@
+{
+    "LLMConfiguration": {
+        "Model": "qwen2.5-coder-14b-instruct",
+        "SystemPromptTemplate": "given a code and inputs from the user:\n1. check the language the entire code was written if it's not %s, reply to user {\"error\":\"WRONG LANGUAGE\"}, stop all executions and do not reply alternative solution!\n2. Simulate the code instruction by instruction.\n3. Report the trace of the code at the end of each iteration.\n4. Think step by step and reply with the output of the function for the given input\n5. reply the output in a json {\"input\": \u003cput the inputs here\u003e, \"output\": \u003cput the output here\u003e}",
+        "Host": "",
+        "Port": 1234
+    },
+    "Port": 8080,
+    "DB": {
+        "user": "elastic",
+        "password": "uWvAYB5j+4xydAPUg9Ty"
+    }
+}

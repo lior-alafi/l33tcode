@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"l33tcode/server/pkg/config"
 	"l33tcode/server/pkg/service"
 
 	"github.com/gin-gonic/gin"
@@ -8,9 +10,11 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.HandleMethodNotAllowed = true
-
-	srv := service.NewService()
+	// r.HandleMethodNotAllowed = true
+	if err := config.LoadConfigurations("config.json"); err != nil {
+		panic("missing configuration")
+	}
+	srv := service.NewService(nil, nil, nil, "")
 
 	r.POST("/admin/question/submit", srv.SubmitQuestion)
 	r.GET("/question/list", srv.ListQuestions)
@@ -21,5 +25,5 @@ func main() {
 	r.GET("/admin/languages/list", srv.ListSupportedLanguages)
 	r.GET("/admin/codeexecutor/list", srv.ListCodeExecutors)
 	r.POST("/admin/codeexecutor/set", srv.SetCodeExecutor)
-	r.Run()
+	r.Run(fmt.Sprintf(":%d", config.Cfg.Port))
 }

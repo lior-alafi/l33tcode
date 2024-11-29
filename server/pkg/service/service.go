@@ -17,7 +17,6 @@ type QuestionService interface {
 
 type CodeSubmitterService interface {
 	SubmitCode(ctx *gin.Context)
-	TestCode(ctx *gin.Context)
 	ListCodeExecutors(ctx *gin.Context)
 	SetCodeExecutor(ctx *gin.Context)
 }
