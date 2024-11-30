@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func (srv *service) SubmitQuestion(c *gin.Context) {
@@ -24,12 +25,16 @@ func (srv *service) SubmitQuestion(c *gin.Context) {
 
 	if err := newQuestion.Validate(); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		srv.logger.Error("question was invalid", zap.Error(err), zap.Any("question", newQuestion))
 		return
 	}
 	user := c.Params.ByName("user")
 	qid, err := srv.questionRepo.SaveQuestion(context.Background(), user, newQuestion)
 	if err != nil {
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("something went wrong error code(%d)", ErrorCodeDB)})
+
+		srv.logger.Error("Save Question failed", zap.Error(err), zap.Int("errorCode", ErrorCodeDB), zap.Any("question", newQuestion))
 		return
 	}
 	newQuestion.Id = qid
@@ -49,6 +54,7 @@ func (srv *service) GetQuestion(c *gin.Context) {
 	question, err := srv.questionRepo.GetQuestion(context.Background(), user, qid, lang)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("something went wrong error code(%d)", ErrorCodeDB)})
+		srv.logger.Error("Get Question failed", zap.Error(err), zap.Int("errorCode", ErrorCodeDB), zap.String("qid", qid), zap.String("language", lang))
 		return
 	}
 
@@ -67,6 +73,8 @@ func (srv *service) RemoveQuestion(c *gin.Context) {
 	err := srv.questionRepo.DeleteQuestion(context.Background(), user, qid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("something went wrong error code(%d)", ErrorCodeDB)})
+		srv.logger.Error("Delete Question failed", zap.Error(err), zap.Int("errorCode", ErrorCodeDB), zap.String("qid", qid))
+
 		return
 	}
 
@@ -85,6 +93,7 @@ func (srv *service) ListQuestions(c *gin.Context) {
 	questions, err := srv.questionRepo.ListQuestions(context.Background(), user, language)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("something went wrong error code(%d)", ErrorCodeDB)})
+		srv.logger.Error("List Questions failed", zap.Error(err), zap.Int("errorCode", ErrorCodeDB))
 		return
 	}
 
@@ -112,11 +121,12 @@ func (srv *service) UpdateQuestion(c *gin.Context) {
 	}
 	user := c.Params.ByName("user")
 
-	question, err := srv.questionRepo.GetQuestion(context.Background(), user, question.Id, "")
+	_, err := srv.questionRepo.SaveQuestion(context.Background(), user, question)
 	if err != nil {
+		srv.logger.Error("update Question failed", zap.Error(err), zap.Int("errorCode", ErrorCodeDB), zap.Any("qid", question))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("something went wrong error code(%d)", ErrorCodeDB)})
 		return
 	}
 
-	c.JSON(http.StatusOK, question)
+	c.JSON(http.StatusOK, "OK")
 }

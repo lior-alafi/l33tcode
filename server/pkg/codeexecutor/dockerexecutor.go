@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"l33tcode/server/pkg/models"
+
+	"go.uber.org/zap"
 )
 
 type dockerCodeExecutor struct {
 }
 
-func NewDockerCodeExecutor(model, host string, port int) models.CodeExecuter {
+func NewDockerCodeExecutor(logger *zap.Logger, model, host string, port int) models.CodeExecuter {
 	ce := &dockerCodeExecutor{}
 
 	return ce

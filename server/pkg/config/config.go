@@ -14,6 +14,8 @@ type LLMConfig struct {
 	SystemPromptTemplate string `json:"SystemPromptTemplate"`
 	Host                 string `json:"Host"`
 	Port                 int    `json:"Port"`
+	ChatURL              string `json:"ChatURL"`
+	SubmitPattern        string `json:"SubmitPattern"`
 }
 type Configuration struct {
 	LLMConfiguration LLMConfig `json:"LLMConfiguration"`

@@ -6,15 +6,19 @@ import (
 	"l33tcode/server/pkg/service"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func main() {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync() // flushes buffer, if any
 	r := gin.Default()
 	// r.HandleMethodNotAllowed = true
 	if err := config.LoadConfigurations("config.json"); err != nil {
 		panic("missing configuration")
 	}
-	srv := service.NewService(nil, nil, nil, "")
+
+	srv := service.NewService(logger, nil, nil, nil, "")
 
 	r.POST("/admin/question/submit", srv.SubmitQuestion)
 	r.GET("/question/list", srv.ListQuestions)

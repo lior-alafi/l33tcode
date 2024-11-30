@@ -2,10 +2,12 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"l33tcode/server/pkg/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func (srv *service) SubmitCode(c *gin.Context) {
@@ -38,4 +40,20 @@ func (srv *service) SetCodeExecutor(c *gin.Context) {
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"error": "Method not allowed"})
 		return
 	}
+
+	var selectedCodeExecutor models.SelectCodeExecuterRequest
+	if err := json.NewDecoder(c.Request.Body).Decode(&selectedCodeExecutor); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	if _, ok := srv.codeExecutorsMap[selectedCodeExecutor.Name]; !ok {
+		err := errors.New("selected code executor doesn't exist")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		srv.logger.Error("selected code executor doesn't exist", zap.Error(err), zap.Any("selectedCE", selectedCodeExecutor))
+		return
+	}
+
+	srv.currentCodeExecutor = selectedCodeExecutor.Name
+	c.JSON(http.StatusOK, "OK")
 }

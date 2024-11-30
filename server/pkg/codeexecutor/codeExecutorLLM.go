@@ -3,25 +3,28 @@ package codeexecutor
 import (
 	"context"
 	"fmt"
-	"l33tcode/server/pkg/config"
 	"l33tcode/server/pkg/models"
 	"net/http"
 	"net/url"
+
+	"go.uber.org/zap"
 )
 
 type llmCodeExecutor struct {
 	selectedModel        string
 	systemPromptTemplate string
+	codeSumbitPrompt     string
 	URL                  url.URL
 	client               *http.Client
+	logger               *zap.Logger
 }
 
-func NewLLMCodeExecutor(model, host string, port int) models.CodeExecuter {
-	ce := &llmCodeExecutor{}
-	ce.systemPromptTemplate = config.Cfg.LLMConfiguration.SystemPromptTemplate
-
+func NewLLMCodeExecutor(logger *zap.Logger, model, host string, port int, chatURL, systemPromptTemplate, CodeSubmittingTemplate string) models.CodeExecuter {
+	ce := &llmCodeExecutor{logger: logger}
+	ce.systemPromptTemplate = systemPromptTemplate
+	ce.codeSumbitPrompt = CodeSubmittingTemplate
 	ce.selectedModel = model
-	urla, _ := url.Parse(fmt.Sprintf("%s:%d", host, port))
+	urla, _ := url.Parse(fmt.Sprintf("%s:%d/%s", host, port, chatURL))
 	ce.URL = *urla
 	ce.client = http.DefaultClient
 	return ce

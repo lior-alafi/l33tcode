@@ -4,6 +4,7 @@ import (
 	"l33tcode/server/pkg/models"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 //go:generate mockgen -destination ../mocks/mock_services_interfaces_test.go  -source service.go -package service
@@ -31,10 +32,11 @@ type service struct {
 	codeExecutorsMap    map[string]models.CodeExecuter
 	currentCodeExecutor string
 	questionRepo        models.QuestionRepository
+	logger              *zap.Logger
 	languageRepo        models.LanguageRepository
 }
 
-func NewService(questionRepo models.QuestionRepository,
+func NewService(logger *zap.Logger, questionRepo models.QuestionRepository,
 	languageRepo models.LanguageRepository,
 	codeExecutorFactory map[string]models.CodeExecuter,
 	defaultCodeExecutor string) Service {
@@ -43,6 +45,7 @@ func NewService(questionRepo models.QuestionRepository,
 		codeExecutorsMap:    codeExecutorFactory,
 		questionRepo:        questionRepo,
 		languageRepo:        languageRepo,
+		logger:              logger,
 	}
 	return srv
 }

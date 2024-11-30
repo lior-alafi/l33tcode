@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -14,14 +13,15 @@ type SupportedLanguage struct {
 	Call      string // foo(a,b,c,d) or Solution().foo(a,b,c,d)
 	Solution  string
 	Prototype string
+	Tests     []Test
 }
 type Question struct {
 	Id                  string
 	Title               string
 	Description         string
 	SupportedLanguagges []SupportedLanguage
-	Tests               []Test
-	Owner               string
+
+	Owner string
 }
 
 func (q *Question) Validate() error {
@@ -33,23 +33,10 @@ func (q *Question) Validate() error {
 		return err
 	}
 
-	if len(q.Tests) == 0 {
-		return errors.New("must contain at least 1 test")
-	}
-
 	if err := q.validateSupportedLanguages(); err != nil {
 		return err
 	}
 
-	for i, tst := range q.Tests {
-		if err := IsEmpty(tst.Expected, fmt.Sprintf("Tests[%d].Expected", i)); err != nil {
-			return err
-		}
-
-		if err := IsEmpty(tst.Inputs, fmt.Sprintf("Tests[%d].Inputs", i)); err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
@@ -69,6 +56,19 @@ func (q *Question) validateSupportedLanguages() error {
 		// TODO: future support for test input
 		if err := IsEmpty(sl.Solution, fmt.Sprintf("SupportedLanguagges[%d].Solution", i)); err != nil {
 			return err
+		}
+
+		if len(sl.Tests) == 0 {
+			return fmt.Errorf("supported language: %s must have at least 1 test", sl.Language)
+		}
+		for j, tst := range sl.Tests {
+			if err := IsEmpty(tst.Expected, fmt.Sprintf("SupportedLanguagges[%d].Tests[%d].Expected", i, j)); err != nil {
+				return err
+			}
+
+			if err := IsEmpty(tst.Inputs, fmt.Sprintf("SupportedLanguagges[%d].Tests[%d].Inputs", i, j)); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
