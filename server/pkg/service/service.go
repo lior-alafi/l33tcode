@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen -destination ../mocks/mock_services_interfaces_test.go  -source service.go -package service
+//go:generate mockgen -destination ../mocks/mock_services_interfaces_test.go  -source service.go -package mocks
 type QuestionService interface {
 	SubmitQuestion(ctx *gin.Context)
 	GetQuestion(ctx *gin.Context)
