@@ -15,5 +15,6 @@ type CodeExecuter interface {
 }
 type LanguageRepository interface {
 	ListSupportedLanguages(ctx context.Context, user string) ([]Language, error)
-	GetupportedLanguagesFromList(ctx context.Context, languages []string) ([]string, error)
+	GetSupportedLanguagesFromList(ctx context.Context, languages []string) ([]string, error)
+	GetLanguage(ctx context.Context, lang string) (Language, error)
 }

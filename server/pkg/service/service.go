@@ -27,6 +27,7 @@ type Service interface {
 	CodeSubmitterService
 
 	ListSupportedLanguages(ctx *gin.Context)
+	GetLanguage(ctx *gin.Context)
 }
 type service struct {
 	codeExecutorsMap    map[string]models.CodeExecuter

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"l33tcode/server/pkg/models"
@@ -21,6 +22,28 @@ func (srv *service) SubmitCode(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+	user := c.Params.ByName("user")
+	if err := models.IsEmpty(newCodeSubmit.QID, "qid"); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		srv.logger.Error("selected code executor doesn't exist", zap.Error(err), zap.Any("submittedCode", newCodeSubmit))
+		return
+	}
+	question, err := srv.questionRepo.GetQuestion(context.Background(), user, newCodeSubmit.QID, newCodeSubmit.Language)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		srv.logger.Error("getting question for codesubmit failed", zap.Error(err), zap.Any("submittedCode", newCodeSubmit))
+		return
+	}
+
+	result, err := srv.codeExecutorsMap[srv.currentCodeExecutor].ExecuteCode(context.Background(), user, newCodeSubmit.Code, &question, nil)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		srv.logger.Error("failed to issue codeExecution with current codesummit", zap.Error(err), zap.Any("submittedCode", newCodeSubmit))
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+
 }
 
 func (srv *service) ListCodeExecutors(c *gin.Context) {

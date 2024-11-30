@@ -1,5 +1,11 @@
 package models
 
+const (
+	CodeExecutionResponsError = "CODE ERROR"
+	CodeExecutionResponsPass  = "PASS"
+	CodeExecutionResponsFail  = "FAIL"
+)
+
 type SelectCodeExecuterRequest struct {
 	Name string
 }
