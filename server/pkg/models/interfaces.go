@@ -2,7 +2,7 @@ package models
 
 import "context"
 
-//go:generate mockgen -destination ../mocks/mock_repo_interfaces_test.go  -source interfaces.go -package mocks
+//go:generate mockgen -destination ../mocks/mock_repo_interfaces.go  -source interfaces.go -package mocks
 type QuestionRepository interface {
 	SaveQuestion(ctx context.Context, user string, q Question) (string, error)
 	GetQuestion(ctx context.Context, user, qid, language string) (Question, error)

@@ -2,6 +2,7 @@ package service
 
 import (
 	"l33tcode/server/pkg/mocks"
+	"l33tcode/server/pkg/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,12 +14,13 @@ import (
 )
 
 type testBed struct {
-	codeExecutorsMap    map[string]*mocks.MockCodeExecuter
+	codeExecutorsMap    map[string]models.CodeExecuter
 	currentCodeExecutor string
 	questionRepo        *mocks.MockQuestionRepository
 	logger              *zap.Logger
-	languageRepo        *mocks.NewMockLanguageRepository
+	languageRepo        *mocks.MockLanguageRepository
 	svc                 Service
+	ce                  *mocks.MockCodeExecuter
 }
 
 func initTestBed(ctrl *gomock.Controller) *testBed {
@@ -27,8 +29,9 @@ func initTestBed(ctrl *gomock.Controller) *testBed {
 	tb.questionRepo = mocks.NewMockQuestionRepository(ctrl)
 	tb.languageRepo = mocks.NewMockLanguageRepository(ctrl)
 	tb.logger = zap.NewNop()
-	tb.codeExecutorsMap = map[string]*mocks.MockCodeExecuter{
-		"a": mocks.MockCodeExecuter(ctrl),
+	tb.ce = mocks.NewMockCodeExecuter(ctrl)
+	tb.codeExecutorsMap = map[string]models.CodeExecuter{
+		"a": tb.ce,
 	}
 	tb.svc = NewService(tb.logger, tb.questionRepo, tb.languageRepo, tb.codeExecutorsMap, "a")
 	return tb
@@ -47,8 +50,6 @@ func TestSubmitCodeBadRequest(t *testing.T) {
 	router.ServeHTTP(w, req)
 	require.Equal(t, http.StatusMethodNotAllowed, w.Code)
 
-	// // Assert response body
-	// expected := `{"message":"Hello Gopher"}`
 }
 func TestListCodeExecutors(t *testing.T) {
 

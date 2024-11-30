@@ -20,16 +20,16 @@ func main() {
 	if err := config.LoadConfigurations("config.json"); err != nil {
 		panic("missing configuration")
 	}
-
+	llmce := codeexecutor.NewLLMCodeExecutor(logger,
+		config.Cfg.LLMConfiguration.Model,
+		config.Cfg.LLMConfiguration.Host,
+		config.Cfg.LLMConfiguration.Port,
+		config.Cfg.LLMConfiguration.ChatURL,
+		config.Cfg.LLMConfiguration.SystemPromptTemplate,
+		config.Cfg.LLMConfiguration.SubmitPattern,
+	)
 	codeExecFactory := map[string]models.CodeExecuter{
-		"llm": codeexecutor.NewLLMCodeExecutor(logger,
-			config.Cfg.LLMConfiguration.Model,
-			config.Cfg.LLMConfiguration.Host,
-			config.Cfg.LLMConfiguration.Port,
-			config.Cfg.LLMConfiguration.ChatURL,
-			config.Cfg.LLMConfiguration.SystemPromptTemplate,
-			config.Cfg.LLMConfiguration.SubmitPattern,
-		),
+		"llm": llmce,
 	}
 
 	esLangsRepo := repositories.NewElasticLanguageRepository()
