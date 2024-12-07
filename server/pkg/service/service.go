@@ -20,6 +20,8 @@ type CodeSubmitterService interface {
 	SubmitCode(ctx *gin.Context)
 	ListCodeExecutors(ctx *gin.Context)
 	SetCodeExecutor(ctx *gin.Context)
+
+	TestCode(ctx *gin.Context)
 }
 
 type Service interface {

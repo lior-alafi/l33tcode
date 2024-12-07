@@ -56,7 +56,7 @@ func (ce *llmCodeExecutor) ExecuteCode(ctx context.Context, user, code string, q
 			return models.CodeExecutionResponsError, nil
 		}
 
-		if fmt.Sprintf("%v", llmresp.Inputs) != tst.Expected {
+		if fmt.Sprintf("%v", llmresp.Output) != tst.Expected {
 			return models.CodeExecutionResponsFail, nil
 		}
 	}

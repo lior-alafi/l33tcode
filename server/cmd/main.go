@@ -45,5 +45,8 @@ func main() {
 	r.GET("/admin/languages/list", srv.ListSupportedLanguages)
 	r.GET("/admin/codeexecutor/list", srv.ListCodeExecutors)
 	r.POST("/admin/codeexecutor/set", srv.SetCodeExecutor)
+
+	r.POST("/code/submit")
+
 	r.Run(fmt.Sprintf(":%d", config.Cfg.Port))
 }

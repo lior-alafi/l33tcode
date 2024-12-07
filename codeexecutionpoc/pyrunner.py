@@ -28,7 +28,7 @@ class Solution:
 
 if __name__=="__main__":
     try:
-        strs = ["flower","flow","flight"]
+        strs = ["flower","flow","floght"]
         expected = 'fl'
         s = Solution()
         status = 'PASSED'
@@ -38,3 +38,11 @@ if __name__=="__main__":
     except Exception as ex:
         print(f"error: {ex}")
 # docker run -v=.:/tmp/run  python python -u /tmp/run/pyrunner.py
+
+
+#result 
+# lior@lior-VirtualBox:~/go/src/l33tcode/codeexecutionpoc$ docker run -v=.:/tmp/run  python python -u /tmp/run/pyrunner.py
+# <output>
+# PASSED input: fl expected: fl
+# </output>
+# lior@lior-VirtualBox:~/go/src/l33tcode/codeexecutionpoc$ 

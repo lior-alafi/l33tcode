@@ -1,5 +1,39 @@
 import requests
+systemTemplate = '''You are a Python code simulator. You will receive the following Python code, along with user inputs. Your task is to simulate the behavior of the Python code using the given inputs without modifying or fixing the code.
 
+Execute the code with the provided inputs.
+Output the results in a JSON format, including:
+"input": The user inputs used for the simulation.
+"code": The Python code that was simulated.
+"output": The raw output produced by executing the code (including errors, if any).
+"error": If there was an error, describe the error that occurred.
+Do not attempt to fix or modify the code. Just simulate and output the result.
+
+Here is the Python code and the user inputs:
+
+Python Code:
+
+# (Insert Python code here)
+User Inputs:
+
+{
+    "input1": "value1",
+    "input2": "value2"
+}
+Please simulate the code execution and provide the output in JSON format.
+
+
+Example output format:
+
+{
+    "input": {
+        "input1": "value1",
+        "input2": "value2"
+    },
+    "code": "print(input1 + input2)",
+    "output": "value1value2",
+    "error": null
+}'''
 
 inputs = '''strs = ["flower","flow","flight"]'''
 code = ["""class Solution:
